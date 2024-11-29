@@ -59,6 +59,5 @@ def plot_graphic_idade_tempoTela():
     plt.xlabel("Idade")
     plt.ylabel("Tela Ligada (Hora/dia)")
     plt.tight_layout()  # Ajusta o layout para evitar sobreposições
-
     # Mostrar o gráfico
     st.pyplot(fig3)

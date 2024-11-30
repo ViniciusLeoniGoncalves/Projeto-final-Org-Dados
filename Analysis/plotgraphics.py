@@ -17,7 +17,7 @@ def plot_graphic_aparelhos_sistema():
         labels=os_counts.index,
         autopct='%1.1f%%',
         startangle=90,
-        colors=["#ff9999", "#66b3ff", "#99ff99", "#ffcc99"]
+        colors=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"]
     )
 
     ax.axis('equal')  # Para deixar o gráfico circular
@@ -31,7 +31,7 @@ def plot_graphic_consumo_modelo():
 
     #gráfico de barras
     fig2, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(battery_drain_avg['Device Model'], battery_drain_avg['Battery Drain (mAh/day)'], color='skyblue')
+    bars = ax.bar(battery_drain_avg['Device Model'], battery_drain_avg['Battery Drain (mAh/day)'], color=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"])
 
     plt.title("Média de Consumo de Bateria por Modelo de Dispositivo")
     plt.xlabel("Modelos de Dispositivo")
@@ -54,11 +54,11 @@ def plot_graphic_idade_tempoTela():
 
     #gráfico de barras
     fig3, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(battery_drain_avg['Age'], battery_drain_avg['Screen On Time (hours/day)'], color='skyblue')
+    ax.bar(battery_drain_avg['Age'], battery_drain_avg['Screen On Time (hours/day)'],color=["#80b3ff"])
 
     plt.title("Idade x Tempo de Tela")
     plt.xlabel("Idade")
-    plt.ylabel("Tela Ligada (Hora/dia)")
+    plt.ylabel("Tempo médio de tela ativa (horas/dia)")
     plt.tight_layout()
     
     st.pyplot(fig3)
@@ -72,13 +72,13 @@ def plot_graphic_genero_tempoTela():
     fig4, ax = plt.subplots(figsize=(8, 8))
     ax.pie(
         screen_time_avg, 
-        labels=screen_time_avg.index, 
+        labels=["Feminino", "Masculino"], 
         autopct='%1.1f%%', 
         startangle=90, 
-        colors=["#ff9999", "#66b3ff"]
+        colors=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"]
     )
 
-    plt.title("Gênero x Proporção do Tempo de Tela")
+    plt.title("Tempo médio de Tela por gênero")
     plt.tight_layout()
 
     st.pyplot(fig4)
@@ -115,7 +115,7 @@ def plot_graphic_faixaEtaria_tempoTela():
     # Adicionando título e legendas
     plt.title('Tempo de tela por faixa etária')
     plt.xlabel('Faixa Etária')
-    plt.ylabel('Average Screen On Time (hours/day)')
+    plt.ylabel('Tempo médio de tela ativa (horas/dia)')
     # Exibir o gráfico
     # Exibir os valores de cada barra
     for i, bar in enumerate(bars):

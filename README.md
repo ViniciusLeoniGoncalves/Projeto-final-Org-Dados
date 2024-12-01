@@ -1,5 +1,4 @@
-# Projeto-final-Org-Dados
- Projeto final da disciplina de Org. Dados período 24.2
+# Projeto Final - Org Dados
+ Projeto final da disciplina ICP142 - Organização de Dados I, no segundo período de 2024.
 
-Um trabalho de análise de dados usando um datasheet CSV originário do Kaggle: https://www.kaggle.com/
-
+Um trabalho de análise de dados usando o datasheet CSV "Mobile Device Usage and User Behavior Dataset", disponível em: https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset

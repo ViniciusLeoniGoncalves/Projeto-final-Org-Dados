@@ -45,10 +45,6 @@ if opt==("ver todos"):
 
     st.markdown("Iremos mostrar o tempo de tela médio para cada **faixa etária**")
     pg.plot_graphic_faixaEtaria_tempoTela()  
-  
-
-st.title("A partir daqui deu ruim:")
-st.text("não deu mais, plotei o gráfico")
 
 
 

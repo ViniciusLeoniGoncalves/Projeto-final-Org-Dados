@@ -115,7 +115,7 @@ def tela_faixa_etaria(df):
     mean_filtered_6 = df_filtered_6['Screen On Time (hours/day)'].mean()
 
     # Definição dos eixos do gráfico
-    x = ['[0 - 10]', '[11 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '> 50']
+    x = ['[0 - 10]', '[11 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '50+']
     y = [mean_filtered_1, mean_filtered_2, mean_filtered_3, mean_filtered_4, mean_filtered_5, mean_filtered_6]
 
     fig, ax = plt.subplots(figsize = (10, 6))
@@ -130,7 +130,7 @@ def tela_faixa_etaria(df):
     plt.title('Tempo de tela médio por faixa etária')
     plt.xlabel('Faixa etária')
     plt.ylabel('Tempo de tela médio (horas/dia)')
-    ax.set_ylim([4.8, 5.5])   # Ajusta o intervalo do eixo y
+    ax.set_ylim([min(y) - 0.5, max(y) + 0.5])   # Ajusta o intervalo do eixo y
 
     # Adiciona o valor acima da barra
     for i, bar in enumerate(bars):

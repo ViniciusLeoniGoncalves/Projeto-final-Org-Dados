@@ -4,15 +4,13 @@ import streamlit as st
 import plotgraphics as pg
 
 # Título e descrição do projeto
-st.title("Bem-vindo ao Galenus Análises")
-st.subheader("Análise criada pelo grupo *Galenus Atrasadus*")
+st.title("Trabalho Final - Análise e Visualização de Dados")
+st.subheader("Uso de dispositivos móveis e comportamento de usuário")
 
 # Tratamento de caminho do arquivo
 datapath = os.getcwd() + '/dataset/mobile_device_usage.csv'
 if  os.path.exists(datapath):
-    # Leitura e limpeza do dataset
     df = pd.read_csv(datapath)
-    df = df.drop(["User ID", "User Behavior Class"], axis = 1)
 
     # Sidebar com as opções
     opt = st.sidebar.radio(
@@ -20,7 +18,7 @@ if  os.path.exists(datapath):
         options = (
             "Home",
             "Distribuição por sistema operacional",
-            "Média de consumo de bateria por dispositivo", 
+            "Média de consumo de bateria por dispositivo",
             "Tempo de tela médio por idade",
             "Tempo de tela médio por gênero",
             "Tempo de tela médio por faixa etária",
@@ -31,19 +29,26 @@ if  os.path.exists(datapath):
     # Conteúdo
     # Página inicial
     if opt == "Home":
-        st.write("# Uso de dispositivos móveis e comportamento de usuário")
-        st.write("## Dataset Utilizado")
-        st.dataframe(df)
-        st.write(
-            "Fonte do Dataset: [Mobile Device Usage and User Behavior Dataset](https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset)"
-        )
-        st.markdown(
-            """
+        st.markdown("""
             ### Instruções:
             - Use o menu lateral para escolher a análise que deseja visualizar.
             - Cada aba contém gráficos e insights específicos.
-            """
+        """)
+        st.write("### Dataset escolhido")
+        st.dataframe(df)
+        st.write(
+            "Fonte: [Mobile Device Usage and User Behavior Dataset](https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset)"
         )
+        df = df.drop(["User ID", "User Behavior Class"], axis = 1)
+        st.write("### Dataset após limpeza")
+        st.dataframe(df)
+        st.markdown("""
+            ### Trabalho desenvolvido por:
+            - Eduardo Penedo - 120043223;
+            - João Victor Borges - 121064604;
+            - Vinicius Leoni - 121083446;
+            - Vítor Ambrizzi - 121059455.
+        """)
     # Exibir gráficos com base na aba selecionada
     elif opt == "Distribuição por sistema operacional":
         st.write("Mostrando a distribuição de usuários de dispositivos móveis aparelhos por sistema operacional:")
@@ -76,5 +81,6 @@ if  os.path.exists(datapath):
         st.markdown("Iremos mostrar o tempo de tela médio para cada **faixa etária**")
         pg.tela_faixa_etaria(df)
 else:
-    st.markdown(f"## Arquivo não encontrado: {datapath}")
-    st.markdown("### Certifique-se de estar no diretório principal do projeto e executar com: streamlit run analysis/main.py")
+    st.write("### Arquivo não encontrado!")
+    st.write(f"O caminho '{datapath}' aparenta estar incorreto.")
+    st.write("Certifique-se de estar no diretório principal do projeto e executar com: 'streamlit run analysis/main.py'")

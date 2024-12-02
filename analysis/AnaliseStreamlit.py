@@ -8,7 +8,6 @@ st.subheader("Análise criada pelo grupo *Galenus Atrasadus*")
 
 # Ler o CSV
 df = pd.read_csv('../dataset/mobile_device_usage.csv')
-df.describe
 
 
 #criar sidebar com botões para exibir os gráficos

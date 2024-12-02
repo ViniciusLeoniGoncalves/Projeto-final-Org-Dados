@@ -1,10 +1,7 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 
-df = pd.read_csv('../dataset/mobile_device_usage.csv')
-
-def so_distribuicao():
+def so_distribuicao(df):
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts()
 
@@ -23,7 +20,7 @@ def so_distribuicao():
 
     st.pyplot(fig)
 
-def bateria_modelo():
+def consumo_modelo(df):
     # Calcular a média do consumo de bateria por modelo
     battery_drain_avg = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
 
@@ -57,7 +54,7 @@ def bateria_modelo():
 
     st.pyplot(fig)
 
-def tela_idade():
+def tela_idade(df):
     # Calcular a média de idade de pessoas por tempo de tela
     age_screen_time_avg = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
 
@@ -79,7 +76,7 @@ def tela_idade():
 
     st.pyplot(fig)
 
-def tela_genero():
+def tela_genero(df):
     # Calcular a média do tempo de tela por gênero
     gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
 
@@ -100,7 +97,7 @@ def tela_genero():
 
     st.pyplot(fig)
 
-def tela_faixa_etaria():
+def tela_faixa_etaria(df):
     # Configuração dos filtros de idade
     df_filtered_1 = df[df['Age'] <= 10]
     df_filtered_2 = df[(df['Age'] > 10) & (df['Age'] <= 20)]

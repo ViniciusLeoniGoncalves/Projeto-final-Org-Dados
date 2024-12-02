@@ -7,7 +7,8 @@ st.title("Bem-vindo ao site Galenus Análises")
 st.subheader("Análise criada pelo grupo *Galenus Atrasadus*")
 
 # Ler o CSV
-df = pd.read_csv('../dataSheet/mobile_device_usage_dataset.csv')
+df = pd.read_csv('../dataset/mobile_device_usage.csv')
+df.describe
 
 
 #criar sidebar com botões para exibir os gráficos

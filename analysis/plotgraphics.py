@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv('../dataSheet/mobile_device_usage_dataset.csv')
+df = pd.read_csv('../dataset/mobile_device_usage.csv')
 
 
 def plot_graphic_aparelhos_sistema():

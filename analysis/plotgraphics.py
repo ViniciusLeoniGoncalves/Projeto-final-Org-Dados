@@ -1,6 +1,5 @@
-import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
+import streamlit as st
 
 df = pd.read_csv('../dataset/mobile_device_usage.csv')
 
@@ -9,96 +8,108 @@ def plot_graphic_aparelhos_sistema():
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts()
 
-    #gráfico de pizza
-    fig1, ax = plt.subplots(figsize=(6,6))
-
-    ax.pie(
-        os_counts,
-        labels=os_counts.index,
-        autopct='%1.1f%%',
-        startangle=90,
-        colors=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"]
+    fig, ax = plt.subplots(figsize = (10, 6))
+    ax.pie( # Configura o gráfico de pizza
+        os_counts.values,
+        labels = os_counts.index,
+        autopct = '%1.2f%%',
+        startangle = 90,
+        colors = ["#66b3ff", "#ff9999"]
     )
 
-    ax.axis('equal')  # Para deixar o gráfico circular
-    plt.title("Distribuição por Sistema Operacional")
-    st.pyplot(fig1) 
+    # Personalizar o gráfico
+    ax.axis('equal')    # Corrige o formato para um círculo
+    plt.title("Distribuição de usuários por sistema operacional")
 
+    st.pyplot(fig)
 
-
-def plot_graphic_consumo_modelo():
+def consumo_modelo(df):
+    # Calcular a média do consumo de bateria por modelo
     battery_drain_avg = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
 
-    #gráfico de barras
-    fig2, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.bar(battery_drain_avg['Device Model'], battery_drain_avg['Battery Drain (mAh/day)'], color=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"])
-
-    plt.title("Média de Consumo de Bateria por Modelo de Dispositivo")
-    plt.xlabel("Modelos de Dispositivo")
-    plt.ylabel("Média de Consumo de Bateria (mAh/dia)")
-    plt.xticks(rotation=45, ha="right")  # Rotaciona rótulos 
-    plt.tight_layout()
-    
-    for i, bar in enumerate(bars):
-        yval = bar.get_height()  # Obtém a altura (valor) da barra
-        ax.text(bar.get_x() + bar.get_width() / 2, yval + 0.1, round(battery_drain_avg['Battery Drain (mAh/day)'][i], 2), 
-            ha='center', va='bottom', fontsize=10)  # Adiciona o texto com a média correspondente
-    
-
-    st.pyplot(fig2)
-
-
-def plot_graphic_idade_tempoTela():
-    #média de idade de pessoas por tempo de tela
-    battery_drain_avg = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
-
-    #gráfico de barras
-    fig3, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(battery_drain_avg['Age'], battery_drain_avg['Screen On Time (hours/day)'],color=["#80b3ff"])
-
-    plt.title("Idade x Tempo de Tela")
-    plt.xlabel("Idade")
-    plt.ylabel("Tempo médio de tela ativa (horas/dia)")
-    plt.tight_layout()
-    
-    st.pyplot(fig3)
-
-
-def plot_graphic_genero_tempoTela():
-    # Calcular a média do tempo de tela por gênero
-    screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean()
-
-    #gráfico de pizza
-    fig4, ax = plt.subplots(figsize=(8, 8))
-    ax.pie(
-        screen_time_avg, 
-        labels=["Feminino", "Masculino"], 
-        autopct='%1.1f%%', 
-        startangle=90, 
-        colors=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"]
+    fig, ax = plt.subplots(figsize = (10, 6))
+    bars = ax.bar(  # Configura o grafico de barras
+        battery_drain_avg['Device Model'], 
+        battery_drain_avg['Battery Drain (mAh/day)'], 
+        color = ['#66b3ff', '#ff9999'],
+        width = 0.6
     )
 
-    plt.title("Tempo médio de Tela por gênero")
-    plt.tight_layout()
+    # Personalizar o gráfico
+    plt.title("Média de consumo de bateria por dispositivo")
+    plt.xlabel("Dispositivos")
+    plt.ylabel("Média de consumo de bateria (mAh/dia)")
+    ax.set_ylim([1400, 1600])   # Ajusta o intervalo do eixo y
+    plt.xticks(rotation=30) # Rotaciona os rótulos para melhor visualização
+    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
 
-    st.pyplot(fig4)
+    # Adiciona o valor acima da barra
+    for i, bar in enumerate(bars):
+        yval = bar.get_height() # Obtém a altura (valor) da barra
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
+            yval + 0.1,     # Posição vertical (logo acima da barra)
+            round(battery_drain_avg['Battery Drain (mAh/day)'][i], 2),  # Texto a ser exibido (valor arredondado)
+            ha = 'center',  # Alinha o texto horizontalmente ao centro
+            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
+            fontsize = 10   # Define o tamanho da fonte do texto
+        )
 
+    st.pyplot(fig)
 
+def tela_idade(df):
+    # Calcular a média de idade de pessoas por tempo de tela
+    age_screen_time_avg = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
 
-def plot_graphic_faixaEtaria_tempoTela():
-    # Filtro 1: Idade <= 10
+    fig, ax = plt.subplots(figsize = (10, 6))
+    ax.bar( # Configura o grafico de barras
+        age_screen_time_avg['Age'],
+        age_screen_time_avg['Screen On Time (hours/day)'],
+        color = ['#66b3ff', '#ff9999'],
+        width = 0.6
+    )
+
+    # Personalizar o gráfico
+    plt.title("Tempo de tela médio por idade")
+    plt.xlabel("Idade")
+    plt.ylabel("Tempo de tela médio (horas/dia)")
+    ax.set_xlim([17, 60])   # Ajusta o intervalo do eixo x
+    ax.set_ylim([4, 7])   # Ajusta o intervalo do eixo y
+    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
+
+    st.pyplot(fig)
+
+def tela_genero(df):
+    # Calcular a média do tempo de tela por gênero
+    gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
+
+    fig, ax = plt.subplots(figsize = (10, 6))
+    ax.bar( # Configura o grafico de barras
+        gender_screen_time_avg['Gender'],
+        gender_screen_time_avg['Screen On Time (hours/day)'],
+        color = ['#ff9999', '#66b3ff'],
+        width = 0.6
+    )
+
+    # Personalizar o gráfico
+    plt.title("Tempo de tela médio por gênero")
+    plt.xlabel("Gênero")
+    plt.ylabel("Tela Ligada (Hora/dia)")
+    ax.set_ylim([5.2, 5.3])   # Ajusta o intervalo do eixo y
+    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
+
+    st.pyplot(fig)
+
+def tela_faixa_etaria(df):
+    # Configuração dos filtros de idade
     df_filtered_1 = df[df['Age'] <= 10]
-    # Filtro 2: 10 < Idade <= 20
     df_filtered_2 = df[(df['Age'] > 10) & (df['Age'] <= 20)]
-    # Filtro 2: 20 < Idade <= 30
     df_filtered_3 = df[(df['Age'] > 20) & (df['Age'] <= 30)]
-    # Filtro 2: 30 < Idade <= 40
     df_filtered_4 = df[(df['Age'] > 30) & (df['Age'] <= 40)]
-    # Filtro 2: 40 < Idade <= 50
     df_filtered_5 = df[(df['Age'] > 40) & (df['Age'] <= 50)]
-    # Filtro 2: 50+
-    df_filtered_6 = df[(df['Age'] > 50) ]
-    # Calcular a média por 'Age' para cada filtro
+    df_filtered_6 = df[(df['Age'] > 50)]
+
+    # Calcular a média do tempo de tela para cada filtro de idade
     mean_filtered_1 = df_filtered_1['Screen On Time (hours/day)'].mean()
     mean_filtered_2 = df_filtered_2['Screen On Time (hours/day)'].mean()
     mean_filtered_3 = df_filtered_3['Screen On Time (hours/day)'].mean()
@@ -106,21 +117,35 @@ def plot_graphic_faixaEtaria_tempoTela():
     mean_filtered_5 = df_filtered_5['Screen On Time (hours/day)'].mean()
     mean_filtered_6 = df_filtered_6['Screen On Time (hours/day)'].mean()
 
-    # Definir as faixas de idade e as médias para o gráfico
-    x = ['[0-10]', '[10-20]','[20-30]','[30-40]','[40-50]','>50']
-    y = [mean_filtered_1, mean_filtered_2, mean_filtered_3, mean_filtered_4, mean_filtered_5 , mean_filtered_6]
-    fig5, ax = plt.subplots(figsize=(8, 8))
-    # Criar o gráfico de barras
-    bars=ax.bar(x, y, color=["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"])
-    # Adicionando título e legendas
-    plt.title('Tempo de tela por faixa etária')
-    plt.xlabel('Faixa Etária')
-    plt.ylabel('Tempo médio de tela ativa (horas/dia)')
-    # Exibir o gráfico
-    # Exibir os valores de cada barra
+    # Definição dos eixos do gráfico
+    x = ['[0 - 10]', '[11 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '> 50']
+    y = [mean_filtered_1, mean_filtered_2, mean_filtered_3, mean_filtered_4, mean_filtered_5, mean_filtered_6]
+
+    fig, ax = plt.subplots(figsize = (10, 6))
+    bars = ax.bar( # Configura o grafico de barras
+        x,
+        y,
+        color = ['#66b3ff', '#ff9999'],
+        width = 0.6
+    )
+
+    # Personalizar o gráfico
+    plt.title('Tempo de tela médio por faixa etária')
+    plt.xlabel('Faixa etária')
+    plt.ylabel('Tempo de tela médio (horas/dia)')
+    ax.set_ylim([4.8, 5.5])   # Ajusta o intervalo do eixo y
+
+    # Adiciona o valor acima da barra
     for i, bar in enumerate(bars):
-        yval = bar.get_height()  # Obtém a altura (valor) da barra
-        ax.text(bar.get_x() + bar.get_width() / 2, yval + 0.1, round(y[i], 2), 
-                ha='center', va='bottom', fontsize=10)  # Adiciona o texto com a média correspondente
+        yval = bar.get_height() # Obtém a altura (valor) da barra
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
+            yval + 0.1,     # Posição vertical (logo acima da barra)
+            round(y[i], 2), # Texto a ser exibido (valor arredondado) 
+            ha = 'center',  # Alinha o texto horizontalmente ao centro
+            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
+            fontsize = 10   # Define o tamanho da fonte do texto
+        )  # Adiciona o texto com a média correspondente
     
-    st.pyplot(fig5)
+    st.pyplot(fig)
+    

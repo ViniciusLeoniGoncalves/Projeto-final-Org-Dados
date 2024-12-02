@@ -1,83 +1,97 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 from pandas import isna
+import plotly.express as px
+import plotly.graph_objects as go
+
 plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
 plt.rcParams.update({'font.size': 15})
 def so_distribuicao(df):
+
     # Contar ocorrências de cada sistema operacional
-    os_counts = df["Operating System"].value_counts()
+    os_counts = df["Operating System"].value_counts().reset_index()
+    os_counts.columns = ["Operating System", "Count"]  # Certifique-se de usar os nomes corretos
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.pie( # Configura o gráfico de pizza
-        os_counts.values,
-        labels = os_counts.index,
-        autopct = '%1.2f%%',
-        startangle = 90,
-        colors = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
-        
+    # Criar gráfico interativo com Plotly
+    fig = px.pie(
+        os_counts, 
+        values="Count",  # Coluna com os valores
+        names="Operating System",  # Coluna com os nomes
+        title="Distribuição de usuários por sistema operacional",
+        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
     )
-
-    # Personalizar o gráfico
-    ax.axis('equal')    # Corrige o formato para um círculo
-    plt.title("Distribuição de usuários por sistema operacional")
-
-    st.pyplot(fig)
+    # Mostrar gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def consumo_modelo(df):
     # Calcular a média do consumo de bateria por modelo
     battery_drain_avg = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    bars = ax.bar(  # Configura o grafico de barras
-        battery_drain_avg['Device Model'], 
-        battery_drain_avg['Battery Drain (mAh/day)'], 
-        color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width = 0.6
+    # Calcular a média do consumo de bateria por modelo
+    battery_drain_avg = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
+
+    # Criar gráfico interativo com Plotly
+    fig = go.Figure()
+
+    # Adicionar barras ao gráfico
+    fig.add_trace(
+        go.Bar(
+            x=battery_drain_avg['Device Model'],
+            y=battery_drain_avg['Battery Drain (mAh/day)'],
+            marker_color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+            text=battery_drain_avg['Battery Drain (mAh/day)'].round(2),  # Valores exibidos acima das barras
+            textposition='outside'  # Posição do texto
+        )
     )
 
-    # Personalizar o gráfico
-    plt.title("Média de consumo de bateria por dispositivo")
-    plt.xlabel("Dispositivos")
-    plt.ylabel("Média de consumo de bateria (mAh/dia)")
-    ax.set_ylim([1400, 1600])   # Ajusta o intervalo do eixo y
-    plt.xticks(rotation=30) # Rotaciona os rótulos para melhor visualização
-    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
+    # Personalizar layout
+    fig.update_layout(
+        title="Média de consumo de bateria por dispositivo",
+        xaxis_title="Dispositivos",
+        yaxis_title="Média de consumo de bateria (mAh/dia)",
+        yaxis=dict(range=[1400, 1600]),  # Definir intervalo do eixo Y
+        xaxis_tickangle=30,  # Rotacionar rótulos do eixo X
+        template='plotly_white',  # Tema do gráfico
+        margin=dict(t=50, b=50, l=50, r=50)
+    )
 
-    # Adiciona o valor acima da barra
-    for i, bar in enumerate(bars):
-        yval = bar.get_height() # Obtém a altura (valor) da barra
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
-            yval + 0.1,     # Posição vertical (logo acima da barra)
-            round(battery_drain_avg['Battery Drain (mAh/day)'][i], 2),  # Texto a ser exibido (valor arredondado)
-            ha = 'center',  # Alinha o texto horizontalmente ao centro
-            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize =15   # Define o tamanho da fonte do texto
-        )
-
-    st.pyplot(fig)
+    # Mostrar gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def tela_idade(df):
     # Calcular a média de idade de pessoas por tempo de tela
     age_screen_time_avg = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.bar( # Configura o grafico de barras
-        age_screen_time_avg['Age'],
-        age_screen_time_avg['Screen On Time (hours/day)'],
-        color =  ['#18c0c4'],
-        width = 0.6
+    # Criar gráfico de barras interativo
+    fig = go.Figure()
+
+    # Adicionar barras ao gráfico
+    fig.add_trace(
+        go.Bar(
+            x=age_screen_time_avg['Age'],
+            y=age_screen_time_avg['Screen On Time (hours/day)'],
+            marker_color='#18c0c4',  # Cor personalizada
+        )
     )
 
-    # Personalizar o gráfico
-    plt.title("Tempo de tela médio por idade")
-    plt.xlabel("Idade")
-    plt.ylabel("Tempo de tela médio (horas/dia)")
-    ax.set_xlim([17, 60])   # Ajusta o intervalo do eixo x
-    ax.set_ylim([4, 7])   # Ajusta o intervalo do eixo y
-    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
+    # Personalizar layout
+    fig.update_layout(
+        title="Tempo de tela médio por idade",
+        xaxis=dict(
+            title="Idade",
+            range=[17, 60],  # Ajuste do intervalo do eixo X
+            tickmode="linear"  # Garantir que as idades sejam exibidas como inteiros
+        ),
+        yaxis=dict(
+            title="Tempo de tela médio (horas/dia)",
+            range=[4, 7]  # Ajuste do intervalo do eixo Y
+        ),
+        template="plotly_dark",  # Tema do gráfico
+        margin=dict(t=50, b=50, l=50, r=50)
+    )
 
-    st.pyplot(fig)
+    # Exibir o gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def tela_genero(df):
     # Calcular a média do tempo de tela por gênero
@@ -172,19 +186,31 @@ def quantidade_idade(df):
     # Calcular a quantidade de pessoas por idade
     age_count = df['Age'].value_counts().sort_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.bar( # Configura o grafico de barras
-        age_count.index,
-        age_count.values,
-        color =  ['#18c0c4'],
-        width = 0.6
+    # Criar gráfico interativo de barras
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Bar(
+            x=age_count.index,  # Idades
+            y=age_count.values,  # Quantidade de pessoas
+            marker_color='#18c0c4',  # Cor personalizada
+        )
     )
 
-    # Personaliza o gráfico
-    plt.title("Contagem de pessoas por Idade")
-    plt.xlabel("Idade")
-    plt.ylabel("Quantidade de pessoas")
-    ax.set_xlim([17, 60])   # Ajusta o intervalo do eixo x
-    plt.tight_layout()
+    # Personalizar layout
+    fig.update_layout(
+        title="Contagem de pessoas por Idade",
+        xaxis=dict(
+            title="Idade",
+            range=[17, 60],  # Intervalo do eixo X
+            tickmode="linear"  # Exibir valores de idade como inteiros
+        ),
+        yaxis=dict(
+            title="Quantidade de pessoas"
+        ),
+        template="plotly_white",  # Tema do gráfico
+        margin=dict(t=50, b=50, l=50, r=50)
+    )
 
-    st.pyplot(fig)
+    # Mostrar gráfico no Streamlit
+    st.plotly_chart(fig)

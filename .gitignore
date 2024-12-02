@@ -1,0 +1,27 @@
+# Ignorar a pasta __pycache__
+__pycache__/
+
+# Ignorar arquivos compilados do Python
+*.pyc
+*.pyo
+
+# Ignorar arquivos de configuração do sistema operacional
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Ignorar arquivos e pastas temporários de IDEs e editores de texto
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignorar arquivos de logs e caches
+*.log
+*.cache
+
+# Ignorar arquivos e pastas específicos do Streamlit
+.streamlit/
+
+# Ignorar outros arquivos temporários
+*.tmp
+*.bak

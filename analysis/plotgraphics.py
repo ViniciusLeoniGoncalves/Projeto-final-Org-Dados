@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import streamlit as st
+from pandas import isna
 
 def so_distribuicao(df):
     # Contar ocorrências de cada sistema operacional
@@ -99,12 +100,11 @@ def tela_genero(df):
 
 def tela_faixa_etaria(df):
     # Configuração dos filtros de idade
-    df_filtered_1 = df[df['Age'] <= 10]
-    df_filtered_2 = df[(df['Age'] > 10) & (df['Age'] <= 20)]
-    df_filtered_3 = df[(df['Age'] > 20) & (df['Age'] <= 30)]
-    df_filtered_4 = df[(df['Age'] > 30) & (df['Age'] <= 40)]
-    df_filtered_5 = df[(df['Age'] > 40) & (df['Age'] <= 50)]
-    df_filtered_6 = df[(df['Age'] > 50)]
+    df_filtered_1 = df[df['Age'] <= 20]
+    df_filtered_2 = df[(df['Age'] > 20) & (df['Age'] <= 30)]
+    df_filtered_3 = df[(df['Age'] > 30) & (df['Age'] <= 40)]
+    df_filtered_4 = df[(df['Age'] > 40) & (df['Age'] <= 50)]
+    df_filtered_5 = df[(df['Age'] > 50)]
 
     # Calcular a média do tempo de tela para cada filtro de idade
     mean_filtered_1 = df_filtered_1['Screen On Time (hours/day)'].mean()
@@ -112,11 +112,17 @@ def tela_faixa_etaria(df):
     mean_filtered_3 = df_filtered_3['Screen On Time (hours/day)'].mean()
     mean_filtered_4 = df_filtered_4['Screen On Time (hours/day)'].mean()
     mean_filtered_5 = df_filtered_5['Screen On Time (hours/day)'].mean()
-    mean_filtered_6 = df_filtered_6['Screen On Time (hours/day)'].mean()
 
     # Definição dos eixos do gráfico
-    x = ['[0 - 10]', '[11 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '> 50']
-    y = [mean_filtered_1, mean_filtered_2, mean_filtered_3, mean_filtered_4, mean_filtered_5, mean_filtered_6]
+    x = ['[0 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '50+']
+    y = [
+        mean_filtered_1,
+        mean_filtered_2,
+        mean_filtered_3,
+        mean_filtered_4,
+        mean_filtered_5
+    ]
+    y = [0 if isna(val) else val for val in y]   # Substitui NaN por 0
 
     fig, ax = plt.subplots(figsize = (10, 6))
     bars = ax.bar( # Configura o grafico de barras
@@ -130,14 +136,14 @@ def tela_faixa_etaria(df):
     plt.title('Tempo de tela médio por faixa etária')
     plt.xlabel('Faixa etária')
     plt.ylabel('Tempo de tela médio (horas/dia)')
-    ax.set_ylim([4.8, 5.5])   # Ajusta o intervalo do eixo y
+    ax.set_ylim([min(y) - 0.1, max(y) + 0.1])   # Ajusta o intervalo do eixo y
 
     # Adiciona o valor acima da barra
     for i, bar in enumerate(bars):
         yval = bar.get_height() # Obtém a altura (valor) da barra
         ax.text(
             bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
-            yval + 0.1,     # Posição vertical (logo acima da barra)
+            yval + 0.01,     # Posição vertical (logo acima da barra)
             round(y[i], 2), # Texto a ser exibido (valor arredondado) 
             ha = 'center',  # Alinha o texto horizontalmente ao centro
             va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto

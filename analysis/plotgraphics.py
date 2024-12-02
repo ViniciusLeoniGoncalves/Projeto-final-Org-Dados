@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 from pandas import isna
-
+plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
+plt.rcParams.update({'font.size': 15})
 def so_distribuicao(df):
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts()
@@ -12,7 +13,8 @@ def so_distribuicao(df):
         labels = os_counts.index,
         autopct = '%1.2f%%',
         startangle = 90,
-        colors = ["#66b3ff", "#ff9999"]
+        colors = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
+        
     )
 
     # Personalizar o gráfico
@@ -29,7 +31,7 @@ def consumo_modelo(df):
     bars = ax.bar(  # Configura o grafico de barras
         battery_drain_avg['Device Model'], 
         battery_drain_avg['Battery Drain (mAh/day)'], 
-        color = ['#66b3ff', '#ff9999'],
+        color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
         width = 0.6
     )
 
@@ -50,7 +52,7 @@ def consumo_modelo(df):
             round(battery_drain_avg['Battery Drain (mAh/day)'][i], 2),  # Texto a ser exibido (valor arredondado)
             ha = 'center',  # Alinha o texto horizontalmente ao centro
             va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize = 10   # Define o tamanho da fonte do texto
+            fontsize =15   # Define o tamanho da fonte do texto
         )
 
     st.pyplot(fig)
@@ -63,7 +65,7 @@ def tela_idade(df):
     ax.bar( # Configura o grafico de barras
         age_screen_time_avg['Age'],
         age_screen_time_avg['Screen On Time (hours/day)'],
-        color = ['#66b3ff', '#ff9999'],
+        color =  ['#18c0c4'],
         width = 0.6
     )
 
@@ -79,22 +81,35 @@ def tela_idade(df):
 
 def tela_genero(df):
     # Calcular a média do tempo de tela por gênero
+    df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
     gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.bar( # Configura o grafico de barras
+    fig, ax = plt.subplots(figsize = (10, 6),)
+    bars = ax.bar( # Configura o grafico de barras
         gender_screen_time_avg['Gender'],
         gender_screen_time_avg['Screen On Time (hours/day)'],
-        color = ['#ff9999', '#66b3ff'],
-        width = 0.6
+        color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+        width = 0.6,
+        
     )
 
-    # Personalizar o gráfico
-    plt.title("Tempo de tela médio por gênero")
-    plt.xlabel("Gênero")
-    plt.ylabel("Tela Ligada (Hora/dia)")
-    ax.set_ylim([5.2, 5.3])   # Ajusta o intervalo do eixo y
-    plt.tight_layout()  # Ajusta o layout para evitar sobreposições
+    plt.title("Tempo de tela médio por gênero",fontsize =15)
+    plt.xlabel("Gênero",fontsize =15)
+    plt.ylabel("Tela Ligada (Hora/dia)", fontsize=15)
+    ax.set_ylim([5.2, 5.3])   
+    plt.tight_layout()  
+
+     # Adiciona o valor acima da barra
+    for i, bar in enumerate(bars):
+        yval = bar.get_height() # altura (valor) da barra
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,  
+            yval + 0.001,     # Posição acima da barra
+            round(gender_screen_time_avg['Screen On Time (hours/day)'][i], 2), 
+            ha = 'center',  # Alinha o texto 
+            va = 'bottom',  
+            fontsize =15   
+        )  
 
     st.pyplot(fig)
 
@@ -128,7 +143,7 @@ def tela_faixa_etaria(df):
     bars = ax.bar( # Configura o grafico de barras
         x,
         y,
-        color = ['#66b3ff', '#ff9999'],
+        color =  ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
         width = 0.6
     )
 
@@ -147,8 +162,29 @@ def tela_faixa_etaria(df):
             round(y[i], 2), # Texto a ser exibido (valor arredondado) 
             ha = 'center',  # Alinha o texto horizontalmente ao centro
             va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize = 10   # Define o tamanho da fonte do texto
+            fontsize =15   # Define o tamanho da fonte do texto
         )  # Adiciona o texto com a média correspondente
     
     st.pyplot(fig)
     
+
+def quantidade_idade(df):
+    # Calcular a quantidade de pessoas por idade
+    age_count = df['Age'].value_counts().sort_index()
+
+    fig, ax = plt.subplots(figsize = (10, 6))
+    ax.bar( # Configura o grafico de barras
+        age_count.index,
+        age_count.values,
+        color =  ['#18c0c4'],
+        width = 0.6
+    )
+
+    # Personaliza o gráfico
+    plt.title("Contagem de pessoas por Idade")
+    plt.xlabel("Idade")
+    plt.ylabel("Quantidade de pessoas")
+    ax.set_xlim([17, 60])   # Ajusta o intervalo do eixo x
+    plt.tight_layout()
+
+    st.pyplot(fig)

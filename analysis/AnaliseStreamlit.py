@@ -8,7 +8,7 @@ st.subheader("Análise criada pelo grupo *Galenus Atrasadus*")
 
 # Ler o CSV
 df = pd.read_csv('../dataset/mobile_device_usage.csv')
-
+df.describe()
 
 #criar sidebar com botões para exibir os gráficos
 opt=st.sidebar.radio("Veja as análises que temos prontas", options=("Aparelhos x Sistema","Eduardo","Consumo x Modelo","Idade x tempo de tela","Gênero x tempo de tela", "faixa Etária x tempo de tela", "ver todos"))

@@ -145,3 +145,4 @@ def tela_faixa_etaria(df):
         )  # Adiciona o texto com a média correspondente
     
     st.pyplot(fig)
+    

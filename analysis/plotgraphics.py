@@ -98,34 +98,35 @@ def tela_genero(df):
     df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
     gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6),)
-    bars = ax.bar( # Configura o grafico de barras
-        gender_screen_time_avg['Gender'],
-        gender_screen_time_avg['Screen On Time (hours/day)'],
-        color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width = 0.6,
-        
+    
+    # Criação do gráfico interativo com Plotly
+    fig = go.Figure(data=[go.Bar(
+        x=gender_screen_time_avg['Gender'],
+        y=gender_screen_time_avg['Screen On Time (hours/day)'],
+        marker=dict(color=['#18c0c4', '#f62196']),
+    )])
+
+    # Adicionando título e rótulos
+    fig.update_layout(
+        title="Tempo de tela médio por gênero",
+        xaxis_title="Gênero",
+        yaxis_title="Tela Ligada (Hora/dia)",
+        yaxis=dict(range=[5.2, 5.3]),  # Ajusta o intervalo do eixo Y
+        font=dict(size=15),
     )
 
-    plt.title("Tempo de tela médio por gênero",fontsize =15)
-    plt.xlabel("Gênero",fontsize =15)
-    plt.ylabel("Tela Ligada (Hora/dia)", fontsize=15)
-    ax.set_ylim([5.2, 5.3])   
-    plt.tight_layout()  
+    # Adiciona os valores acima das barras
+    for i, val in enumerate(gender_screen_time_avg['Screen On Time (hours/day)']):
+        fig.add_annotation(
+            x=gender_screen_time_avg['Gender'][i],
+            y=val + 0.001,  # Posição do valor acima da barra
+            text=f"{round(val, 2)}",  # Texto com o valor arredondado
+            showarrow=False,
+            font=dict(size=15)
+        )
 
-     # Adiciona o valor acima da barra
-    for i, bar in enumerate(bars):
-        yval = bar.get_height() # altura (valor) da barra
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,  
-            yval + 0.001,     # Posição acima da barra
-            round(gender_screen_time_avg['Screen On Time (hours/day)'][i], 2), 
-            ha = 'center',  # Alinha o texto 
-            va = 'bottom',  
-            fontsize =15   
-        )  
-
-    st.pyplot(fig)
+    # Exibe o gráfico interativo no Streamlit
+    st.plotly_chart(fig)
 
 def tela_faixa_etaria(df):
     # Configuração dos filtros de idade
@@ -153,34 +154,34 @@ def tela_faixa_etaria(df):
     ]
     y = [0 if isna(val) else val for val in y]   # Substitui NaN por 0
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    bars = ax.bar( # Configura o grafico de barras
-        x,
-        y,
-        color =  ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width = 0.6
+    # Criação do gráfico interativo com Plotly
+    fig = go.Figure(data=[go.Bar(
+        x=x,
+        y=y,
+        marker=dict(color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']),
+    )])
+
+    # Adicionando título e rótulos
+    fig.update_layout(
+        title='Tempo de tela médio por faixa etária',
+        xaxis_title='Faixa etária',
+        yaxis_title='Tempo de tela médio (horas/dia)',
+        yaxis=dict(range=[min(y) - 0.1, max(y) + 0.1]),  # Ajusta o intervalo do eixo y
     )
 
-    # Personalizar o gráfico
-    plt.title('Tempo de tela médio por faixa etária')
-    plt.xlabel('Faixa etária')
-    plt.ylabel('Tempo de tela médio (horas/dia)')
-    ax.set_ylim([min(y) - 0.1, max(y) + 0.1])   # Ajusta o intervalo do eixo y
+    # Adiciona os valores acima das barras
+    for i, val in enumerate(y):
+        fig.add_annotation(
+            x=x[i],
+            y=val + 0.05,  # Ajusta a posição do valor acima da barra
+            text=f"{round(val, 2)}",  # Valor arredondado
+            showarrow=False,
+            font=dict(size=15)
+        )
 
-    # Adiciona o valor acima da barra
-    for i, bar in enumerate(bars):
-        yval = bar.get_height() # Obtém a altura (valor) da barra
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
-            yval + 0.01,     # Posição vertical (logo acima da barra)
-            round(y[i], 2), # Texto a ser exibido (valor arredondado) 
-            ha = 'center',  # Alinha o texto horizontalmente ao centro
-            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize =15   # Define o tamanho da fonte do texto
-        )  # Adiciona o texto com a média correspondente
-    
-    st.pyplot(fig)
-    
+    # Exibe o gráfico interativo no Streamlit
+    st.plotly_chart(fig)
+        
 
 def quantidade_idade(df):
     # Calcular a quantidade de pessoas por idade
@@ -208,7 +209,7 @@ def quantidade_idade(df):
         yaxis=dict(
             title="Quantidade de pessoas"
         ),
-        template="plotly_white",  # Tema do gráfico
+        template="plotly_dark",  # Tema do gráfico
         margin=dict(t=50, b=50, l=50, r=50)
     )
 

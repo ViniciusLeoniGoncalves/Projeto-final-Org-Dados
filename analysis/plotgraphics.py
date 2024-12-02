@@ -1,10 +1,7 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 
-df = pd.read_csv('../dataset/mobile_device_usage.csv')
-
-
-def plot_graphic_aparelhos_sistema():
+def so_distribuicao(df):
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts()
 

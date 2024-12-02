@@ -6,9 +6,12 @@ import plotgraphics as pg
 st.title("Bem-vindo ao Galenus Análises")
 st.subheader("Análise criada pelo grupo *Galenus Atrasadus*")
 
+# Tratamento de caminho do arquivo
 datapath = os.getcwd() + '/dataset/mobile_device_usage.csv'
 if  os.path.exists(datapath):
+    # Leitura e limpeza do dataset
     df = pd.read_csv(datapath)
+    df = df.drop(["User ID", "User Behavior Class"], axis = 1)
 
     # Criar sidebar com botões para exibir os gráficos
     opt = st.sidebar.radio(

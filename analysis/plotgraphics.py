@@ -280,25 +280,27 @@ def tela_faixa_etaria(df):
         width = 0.6
     )
 
-    # Personalizar o gráfico
-    plt.title('Tempo de tela médio por faixa etária')
-    plt.xlabel('Faixa etária')
-    plt.ylabel('Tempo de tela médio (horas/dia)')
-    ax.set_ylim([min(medias) - 0.1, max(medias) + 0.1])   # Ajusta o intervalo do eixo y
+    fig = go.Figure(data=[go.Bar(
+        x=labels_faixa_etaria,
+        y=medias,
+        text=[round(val, 2) for val in medias],  # Adiciona texto com os valores arredondados
+        textposition='outside',  # Posiciona o texto acima das barras
+        marker=dict(color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b'])
+    )])
 
-    # Adiciona o valor acima da barra
-    for i, bar in enumerate(bars):
-        yval = bar.get_height() # Obtém a altura (valor) da barra
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,  # Posição horizontal do texto (centro da barra)
-            yval + 0.01,     # Posição vertical (logo acima da barra)
-            round(medias[i], 2), # Texto a ser exibido (valor arredondado) 
-            ha = 'center',  # Alinha o texto horizontalmente ao centro
-            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize =15   # Define o tamanho da fonte do texto
-        )  # Adiciona o texto com a média correspondente
-    
-    st.pyplot(fig)
+    # Personalizar o layout
+    fig.update_layout(
+        title='Tempo de tela médio por faixa etária',
+        xaxis_title='Faixa etária',
+        yaxis_title='Tempo de tela médio (horas/dia)',
+        yaxis=dict(range=[min(medias) - 0.1, max(medias) + 0.1]),  # Ajusta o intervalo do eixo Y
+        font=dict(size=15),
+        plot_bgcolor='rgba(0,0,0,0)',  # Remove fundo do gráfico
+        paper_bgcolor='rgba(0,0,0,0)',  # Remove fundo do layout
+    )
+
+    # Exibe o gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def usuarios_faixa_etaria(df):
     # Obter os filtros de faixa etária
@@ -308,27 +310,28 @@ def usuarios_faixa_etaria(df):
     contagem = [len(filtro) for filtro in filtros]
     contagem = [0 if isna(val) else val for val in contagem]  # Substitui NaN por 0
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    wedeges, texts, autotexts = ax.pie( # Configura o gráfico de pizza
-        contagem,
-        autopct = '%1.2f%%',
-        startangle = 90,
-        colors = ["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"]
+    fig = px.pie(
+        names=labels_faixa_etaria,
+        values=contagem,
+        title="Distribuição de usuários por faixa etária",
+        color_discrete_sequence=["#ffb3b3", "#80b3ff", "#b3ffb3", "#ffb366", "#c2b3ff"]
     )
 
-    # Personalizar o gráfico
-    ax.axis('equal')    # Corrige o formato para um círculo
-    # Adicionar a legenda fora do gráfico
-    ax.legend(
-        wedeges,    # Referência às fatias do gráfico
-        labels_faixa_etaria,          # Texto da legenda
-        title = "Faixas Etárias",
-        loc = "center left",            # Localização da legenda
-        bbox_to_anchor=(1, 0, 0.5, 1)   # Ajusta a posição da legenda (fora do gráfico)
+    # Personalizar o layout
+    fig.update_traces(textinfo='percent+label')  # Mostra rótulos e porcentagens
+    fig.update_layout(
+        legend_title="Faixas Etárias",
+        legend=dict(
+            orientation="v",  # Exibe verticalmente
+            yanchor="top",
+            y=0.9,
+            xanchor="left",
+            x=1.05  # Move a legenda para fora do gráfico
+        )
     )
-    plt.title("Distribuição de usuários por faixa etária")
 
-    st.pyplot(fig)
+    # Exibe o gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def usuarios_genero(df):
     # Configuração dos filtros de gênero
@@ -342,21 +345,16 @@ def usuarios_genero(df):
     contagem = [len(filtro) for filtro in filtros]
     contagem = [0 if isna(val) else val for val in contagem]  # Substitui NaN por 0
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-
-    ax.pie( # Configura o gráfico de pizza
-        contagem,
-        labels = labels_genero,
-        autopct = '%1.2f%%',
-        startangle = 90,
-        colors = ["#66b3ff", "#ff9999"]
+     # Criação do gráfico de pizza com Plotly Express
+    fig = px.pie(
+        names=labels_genero,
+        values=contagem,
+        title="Distribuição de usuários por gênero",
+        color_discrete_map={"Male": "#66b3ff", "Female": "#ff9999"}
     )
 
-    # Personalizar o gráfico
-    ax.axis('equal')    # Corrige o formato para um círculo
-    plt.title("Distribuição de usuários por gênero")
-
-    st.pyplot(fig)
+    # Exibe o gráfico no Streamlit
+    st.plotly_chart(fig)
 
 def aplicativos_faixa_etaria(df):
     # Obter os filtros de faixa etária
@@ -366,18 +364,21 @@ def aplicativos_faixa_etaria(df):
     medias = [filtro['Number of Apps Installed'].mean() for filtro in filtros]
     medias = [0 if isna(val) else val for val in medias]  # Substitui NaN por 0
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.bar( # Configura o grafico de barras
-        labels_faixa_etaria,
-        medias,
-        color = ["#ffb3b3","#80b3ff","#b3ffb3","#ffb366","#c2b3ff"],
-        width = 0.6
-    )
+    # Criação do gráfico interativo com Plotly
+    fig = go.Figure(data=[go.Bar(
+        x=labels_faixa_etaria,
+        y=medias,
+        marker=dict(color=["#ffb3b3", "#80b3ff", "#b3ffb3", "#ffb366", "#c2b3ff"]),
+    )])
 
     # Personalizar o gráfico
-    plt.title('Média de aplicativos instalados por faixa etária')
-    plt.xlabel('Faixa etária')
-    plt.ylabel('Aplicativos instalados')
-    ax.set_ylim([min(medias) - 1, max(medias) + 1])   # Ajusta o intervalo do eixo y
+    fig.update_layout(
+        title='Média de aplicativos instalados por faixa etária',
+        xaxis_title='Faixa etária',
+        yaxis_title='Aplicativos instalados',
+        yaxis=dict(range=[min(medias) - 1, max(medias) + 1]),
+        font=dict(size=15)
+    )
 
-    st.pyplot(fig)
+    # Exibe o gráfico no Streamlit
+    st.plotly_chart(fig)

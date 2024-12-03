@@ -4,7 +4,8 @@ import streamlit as st
 import plotgraphics as pg
 
 # Título e descrição do projeto
-
+st.title("Trabalho Final - Análise e Visualização de Dados")
+st.subheader("Uso de dispositivos móveis e comportamento de usuário")
 
 # Tratamento de caminho do arquivo
 datapath = os.getcwd() + '/dataset/mobile_device_usage.csv'
@@ -15,32 +16,43 @@ if  os.path.exists(datapath):
     opt = st.sidebar.radio(
         "Navegue pelas análises disponíveis",
         options = (
-            "Home",
+            "Página inicial",
             "Distribuição por sistema operacional",
             "Média de consumo de bateria por dispositivo",
             "Tempo de tela médio por idade",
             "Tempo de tela médio por gênero",
             "Tempo de tela médio por faixa etária",
+            "Distribuição de usuários por faixa etária",
+            "Distribuição de usuários por gênero",
+            "Média de aplicativos instalados por faixa etária",
             "Ver todos"
         )
     )
 
     # Conteúdo
     # Página inicial
-    if opt == "Home":
-        st.title("Trabalho Final - Análise e Visualização de Dados")
-        st.subheader("Uso de dispositivos móveis e comportamento de usuário")
+    if opt == "Página inicial":
         st.markdown("""
             ### Instruções:
             - Use o menu lateral para escolher a análise que deseja visualizar.
             - Cada aba contém gráficos e insights específicos.
+            - O menu lateral pode ser acessado a qualquer momento.
+            - Ao final de toda página você pode ser direcionado para a página inicial.
         """)
         st.write("### Dataset escolhido")
         st.dataframe(df)
         st.write(
             "Fonte: [Mobile Device Usage and User Behavior Dataset](https://www.kaggle.com/datasets/valakhorasani/mobile-device-usage-and-user-behavior-dataset)"
         )
+
+        # Limpeza
         df = df.drop(["User ID", "User Behavior Class"], axis = 1)
+        st.write("""
+            Após realizar o entendimento do dataset, ficou claro que não existiam
+            valores nulos, e que a única limpeza necessária seria a das colunas
+            "User ID" e "User Behavior Class", desnecessárias para a análise.
+        """)
+
         st.write("### Dataset após limpeza")
         st.dataframe(df)
         st.markdown("""
@@ -77,7 +89,12 @@ if  os.path.exists(datapath):
         st.markdown("Então observando o tempo de tela médio para cada **faixa etária**, podemos constatar que nesta análise que de forma geral, pessoas 50+ passam, em média, mais tempo com aparelho ativamente")
         st.markdown("Iremos mostrar o tempo de tela médio para cada **faixa etária**")
         pg.tela_faixa_etaria(df)
-
+    elif opt == ("Distribuição de usuários por faixa etária"):
+        pg.usuarios_faixa_etaria(df)
+    elif opt == ("Distribuição de usuários por gênero"):
+        pg.usuarios_genero(df)
+    elif opt == ("Média de aplicativos instalados por faixa etária"):
+        pg.aplicativos_faixa_etaria(df)
     elif opt == ("Ver todos"):
 
         st.markdown("# Qual o modelo de celular mais popular entre os usuários?")

@@ -99,6 +99,7 @@ if  os.path.exists(datapath):
         pg.usuarios_genero(df)
     elif opt == ("Média de aplicativos instalados por faixa etária"):
         st.markdown("# Qual faixa etária guarda mais aplicativos?")
+
         st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [0-20]** tem mais aplicativos instalados")
         pg.aplicativos_faixa_etaria(df)
 
@@ -108,6 +109,7 @@ if  os.path.exists(datapath):
         st.markdown("# Qual o modelo de celular mais popular entre os usuários?")
         st.write("Observando contagem de sistemas operacionais em nossa base de dados, é possível afirmar com certeza que os aparelhos celulares dos usuários utilizam **predominantemente** o Android. Veja a proporção:")
         pg.so_distribuicao(df)
+
     
         st.markdown("# Qual modelo de celular consome em média mais bateria?")
         st.write("Ao observar o consumo médio de bateria por modelo de celular, podemos constatar por uma margem significativa que o **Iphone 12** é o aparelho que mais consome bateria, em média. Vejamos o gráfico:")
@@ -135,10 +137,12 @@ if  os.path.exists(datapath):
         st.markdown("Podemos observar no gráfico abaixo que os usuários na faixa de **[21-30] e [31-40]** predominam em nossa base de dados.")
         pg.usuarios_faixa_etaria(df)
     
+
         #st.markdown("# A base de dados tem mais usuários homens ou mulheres?")
         #st.markdown("Observando o gráfico abaixo, podemos ver que a proporção é bem próxima, mas ainda assim existem **mais usuários masculinos**")
         #pg.usuarios_genero(df)
               
+
         st.markdown("# Qual faixa etária guarda mais aplicativos?")
         st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [21-30]** tem mais aplicativos instalados")
         pg.aplicativos_faixa_etaria(df)

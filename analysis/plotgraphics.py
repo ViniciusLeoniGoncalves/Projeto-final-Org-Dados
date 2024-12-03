@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import streamlit as st
 from pandas import isna
+
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -10,6 +11,7 @@ plt.rcParams.update({'font.size': 15})
 
 
 def so_distribuicao(df):
+
 
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts().reset_index()
@@ -76,6 +78,7 @@ def tela_idade(df):
         )
     )
 
+
    
     fig.update_layout(
         title="Tempo de tela médio por idade",
@@ -92,13 +95,36 @@ def tela_idade(df):
         margin=dict(t=50, b=50, l=50, r=50)
     )
 
+
     
     st.plotly_chart(fig)
+
+def quantidade_idade(df):
+    # Calcular a quantidade de pessoas por idade
+    age_count = df['Age'].value_counts().sort_index()
+
+    fig, ax = plt.subplots(figsize = (10, 6))
+    ax.bar( # Configura o grafico de barras
+        age_count.index,
+        age_count.values,
+        color = ['#18c0c4'],
+        width = 0.6
+    )
+
+    # Personaliza o gráfico
+    plt.title("Contagem de pessoas por idade")
+    plt.xlabel("Idade")
+    plt.ylabel("Quantidade de pessoas")
+    ax.set_xlim([min(age_count.index) - 1, max(age_count.index) + 1])   # Ajusta o intervalo do eixo x
+    plt.tight_layout()
+
+    st.pyplot(fig)
 
 def tela_genero(df):
     # Calcula a média do tempo de tela por gênero
     df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
     gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
+
 
     
     # Criação do gráfico 
@@ -125,10 +151,12 @@ def tela_genero(df):
             text=f"{round(val, 2)}",  
             showarrow=False,
             font=dict(size=15)
+
         )
 
    
     st.plotly_chart(fig)
+
 
 def tela_faixa_etaria(df):
     df_filtered_1 = df[df['Age'] <= 20]

@@ -99,7 +99,7 @@ if  os.path.exists(datapath):
         pg.usuarios_genero(df)
     elif opt == ("Média de aplicativos instalados por faixa etária"):
         st.markdown("# Qual faixa etária guarda mais aplicativos?")
-        st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [21-30]** tem mais aplicativos instalados")
+        st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [0-20]** tem mais aplicativos instalados")
         pg.aplicativos_faixa_etaria(df)
     elif opt == ("Ver todos"):
 

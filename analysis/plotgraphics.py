@@ -18,7 +18,9 @@ def so_distribuicao(df):
         values="Count",  # Coluna com os valores
         names="Operating System",  # Coluna com os nomes
         title="Distribuição de usuários por sistema operacional",
-        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
+        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+        width=600,  # Largura do gráfico
+        height=600   # Altura do gráfico
     )
     # Mostrar gráfico no Streamlit
     st.plotly_chart(fig)
@@ -218,37 +220,35 @@ def quantidade_idade(df):
 
 
 def tela_genero(df):
-    # Calcular a média do tempo de tela por gênero
+    # Traduzir o gênero para português
     df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
+    
+    # Calcular a média do tempo de tela por gênero
     gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
-
-    fig, ax = plt.subplots(figsize = (10, 6))
-    bars = ax.bar( # Configura o grafico de barras
-        gender_screen_time_avg['Gender'],
-        gender_screen_time_avg['Screen On Time (hours/day)'],
-        color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width = 0.6,
+    
+    # Criar o gráfico de barras interativo
+    fig = px.bar(
+        gender_screen_time_avg,
+        x='Gender',
+        y='Screen On Time (hours/day)',
+        text='Screen On Time (hours/day)',
+        labels={'Gender': 'Gênero', 'Screen On Time (hours/day)': 'Tempo de Tela (Horas/Dia)'},
+        title="Tempo de Tela Médio por Gênero",
+        color='Gender',  # Cor para destacar cada gênero
+        color_discrete_map={'Feminino': '#f62196', 'Masculino': '#18c0c4'}  # Mapeamento de cores
     )
-
-    plt.title("Tempo de tela médio por gênero", fontsize = 15)
-    plt.xlabel("Gênero", fontsize = 15)
-    plt.ylabel("Tela Ligada (Hora/dia)", fontsize = 15)
-    ax.set_ylim([min(gender_screen_time_avg['Screen On Time (hours/day)']) - 0.05, max(gender_screen_time_avg['Screen On Time (hours/day)']) + 0.05])   # Ajusta o intervalo do eixo y
-    plt.tight_layout()  
-
-     # Adiciona o valor acima da barra
-    for i, bar in enumerate(bars):
-        yval = bar.get_height() # altura (valor) da barra
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,  
-            yval + 0.001,     # Posição acima da barra
-            round(gender_screen_time_avg['Screen On Time (hours/day)'][i], 2), # Texto a ser exibido (valor arredondado)
-            ha = 'center',  # Alinha o texto 
-            va = 'bottom',  # Alinha o texto verticalmente à parte inferior do texto
-            fontsize = 15   # Define o tamanho da fonte do texto
-        )
-
-    st.pyplot(fig)
+    
+    # Ajustar layout
+    fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
+    fig.update_layout(
+        yaxis=dict(range=[5.22, 5.32]),  # Intervalo eixo Y
+        xaxis_title="Gênero",
+        yaxis_title="Tempo de Tela (Horas/Dia)",
+        showlegend=False,
+        title_x=0.5,  # Centralizar título
+    )
+    
+    st.plotly_chart(fig)
 
 def filtros_faixa_etaria(df):
     # Configuração dos filtros de idade
@@ -271,14 +271,6 @@ def tela_faixa_etaria(df):
     # Calcular a média do tempo de tela para cada filtro de idade
     medias = [filtro['Screen On Time (hours/day)'].mean() for filtro in filtros]
     medias = [0 if isna(val) else val for val in medias]  # Substitui NaN por 0
-
-    fig, ax = plt.subplots(figsize = (10, 6))
-    bars = ax.bar( # Configura o grafico de barras
-        labels_faixa_etaria,
-        medias,
-        color =  ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width = 0.6
-    )
 
     fig = go.Figure(data=[go.Bar(
         x=labels_faixa_etaria,
@@ -327,11 +319,13 @@ def usuarios_faixa_etaria(df):
             y=0.9,
             xanchor="left",
             x=1.05  # Move a legenda para fora do gráfico
-        )
+        ),
+        width=600,  # Largura do gráfico
+        height=600   # Altura do gráfico
     )
 
     # Exibe o gráfico no Streamlit
-    st.plotly_chart(fig)
+    st.plotly_chart(fig,use_container_width=False)
 
 def usuarios_genero(df):
     # Configuração dos filtros de gênero
@@ -350,7 +344,9 @@ def usuarios_genero(df):
         names=labels_genero,
         values=contagem,
         title="Distribuição de usuários por gênero",
-        color_discrete_map={"Male": "#66b3ff", "Female": "#ff9999"}
+        color_discrete_map={"Male": "#66b3ff", "Female": "#ffcbdb"},
+        width=600,  # Largura do gráfico
+        height=600   # Altura do gráfico
     )
 
     # Exibe o gráfico no Streamlit
@@ -377,7 +373,9 @@ def aplicativos_faixa_etaria(df):
         xaxis_title='Faixa etária',
         yaxis_title='Aplicativos instalados',
         yaxis=dict(range=[min(medias) - 1, max(medias) + 1]),
-        font=dict(size=15)
+        font=dict(size=15),
+        width=600,  # Largura do gráfico
+        height=600   # Altura do gráfico
     )
 
     # Exibe o gráfico no Streamlit

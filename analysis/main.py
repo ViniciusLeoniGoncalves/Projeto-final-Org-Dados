@@ -99,8 +99,11 @@ if  os.path.exists(datapath):
         pg.usuarios_genero(df)
     elif opt == ("Média de aplicativos instalados por faixa etária"):
         st.markdown("# Qual faixa etária guarda mais aplicativos?")
-        st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [21-30]** tem mais aplicativos instalados")
+
+        st.markdown("Observando o gráfico abaixo, podemos ver que os usuários na **faixa de [0-20]** tem mais aplicativos instalados")
         pg.aplicativos_faixa_etaria(df)
+
+    #Exibe todos os gráficos nessa opção 
     elif opt == ("Ver todos"):
 
         st.markdown("# Qual o modelo de celular mais popular entre os usuários?")
@@ -111,7 +114,6 @@ if  os.path.exists(datapath):
         st.markdown("# Qual modelo de celular consome em média mais bateria?")
         st.write("Ao observar o consumo médio de bateria por modelo de celular, podemos constatar por uma margem significativa que o **Iphone 12** é o aparelho que mais consome bateria, em média. Vejamos o gráfico:")
         pg.consumo_modelo(df)
-    
 
         st.markdown("# Qual idade passa mais tempo utilizando celular?")
         st.write("Olhando o tempo médio de tela por idade, percebemos que nesta análise as pessoas com **47 anos** possuem o tempo médio de uso mais elevado")
@@ -119,26 +121,26 @@ if  os.path.exists(datapath):
 
         st.markdown("Também podemos ver que essa idade representa uma quantidade relevante da análise neste gráfico abaixo de pessoas por idade:")
         pg.quantidade_idade(df)
-
     
         st.markdown("# Quem passa mais tempo utilizando o celular; homens ou mulheres?")
         st.markdown("Observando o tempo médio de tela por gênero, podemos perceber que, por uma **pequeníssima** margem, homens tendem a ficar mais tempo ativamente no aparelho:")
         st.write("Iremos mostrar o tempo médio de tela por gênero:")
         pg.tela_genero(df)
-    
 
         st.markdown("# Qual faixa entária passa mais tempo utilizando o celular?")
         st.markdown("Observamos já o tempo de tela por idade, mas essa informação pode ser muito granular.")
         st.markdown("Então observando o tempo de tela médio para cada **faixa etária**, podemos constatar que nesta análise que de forma geral, pessoas 50+ passam, em média, mais tempo com aparelho ativamente")
         st.markdown("Iremos mostrar o tempo de tela médio para cada **faixa etária**")
         pg.tela_faixa_etaria(df)
-    
 
         st.markdown("# Qual a faixa etária mais predominante?")
         st.markdown("Podemos observar no gráfico abaixo que os usuários na faixa de **[21-30] e [31-40]** predominam em nossa base de dados.")
         pg.usuarios_faixa_etaria(df)
     
 
+        #st.markdown("# A base de dados tem mais usuários homens ou mulheres?")
+        #st.markdown("Observando o gráfico abaixo, podemos ver que a proporção é bem próxima, mas ainda assim existem **mais usuários masculinos**")
+        #pg.usuarios_genero(df)
               
 
         st.markdown("# Qual faixa etária guarda mais aplicativos?")

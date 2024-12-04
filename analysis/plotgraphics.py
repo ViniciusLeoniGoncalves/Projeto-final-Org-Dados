@@ -1,12 +1,7 @@
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
 from pandas import isna
-
-#Obsoleto na troca da biblioteca
-plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
-plt.rcParams.update({'font.size': 15})
 
 def so_distribuicao(df):
     # Contar ocorrências de cada sistema operacional
@@ -20,6 +15,7 @@ def so_distribuicao(df):
         names = "Sistema Operacional",  # Coluna com nomes
         title = "Distribuição de usuários por sistema operacional",
         color_discrete_sequence = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+        template = 'plotly_dark',
         width = 600,
         height = 600
     )
@@ -49,7 +45,7 @@ def consumo_modelo(df):
         yaxis_title = "Média de consumo de bateria (mAh/dia)",
         yaxis = dict(range = [1400, 1600]),
         xaxis_automargin = True,
-        template = 'plotly_white',
+        template = 'plotly_dark',
         margin = dict(t = 50, b = 50, l = 50, r = 50)
     )
 
@@ -96,8 +92,8 @@ def quantidade_idade(df):
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
-            x = contagem_idade['Age'],
-            y = contagem_idade['Screen On Time (hours/day)'],
+            x = contagem_idade.index,
+            y = contagem_idade.values,
             marker_color ='#18c0c4'  
         )
     )
@@ -116,11 +112,10 @@ def quantidade_idade(df):
         margin = dict(t = 50, b = 50, l = 50, r = 50)
     )
 
-    st.pyplot(fig)
+    st.plotly_chart(fig)
 
 def tela_genero(df):
     # Calcula a média do tempo de tela por gênero
-    df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
     media_tela_genero = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
     
     # Cria a figura
@@ -129,7 +124,7 @@ def tela_genero(df):
         go.Bar(
             x = media_tela_genero['Gender'],
             y = media_tela_genero['Screen On Time (hours/day)'],
-            marker_color = ['#18c0c4', '#f62196'],
+            marker_color = ['#f62196', '#18c0c4'],
             text = media_tela_genero['Screen On Time (hours/day)'].round(2),
             textposition = 'outside'
         )
@@ -139,135 +134,15 @@ def tela_genero(df):
     fig.update_layout(
         title = "Tempo de tela médio por gênero",
         xaxis_title = "Gênero",
-        yaxis = dict(
-            title = "Tempo de tela (Hora/dia)",
-            range = [5.2, 5.3]
-        ),
-        font_size = 15,
-        title_x = 0,
-        title_y = 0.95,
+        yaxis_title = "Tempo de tela (Hora/dia)",
+        yaxis = dict(range = [5.2, 5.3]),
+        font = dict(size = 15),
+        title_x = 0,    # Alinha o título à esquerda
+        title_y = 0.95, # Ajusta a posição vertical do título, se necessário
         template = "plotly_dark",   # Tema do gráfico
         margin = dict(t = 50, b = 50, l = 50, r = 50)
     )
 
-    st.plotly_chart(fig)
-
-def tela_faixa_etaria(df):
-    df_filtered_1 = df[df['Age'] <= 20]
-    df_filtered_2 = df[(df['Age'] > 20) & (df['Age'] <= 30)]
-    df_filtered_3 = df[(df['Age'] > 30) & (df['Age'] <= 40)]
-    df_filtered_4 = df[(df['Age'] > 40) & (df['Age'] <= 50)]
-    df_filtered_5 = df[(df['Age'] > 50)]
-
-    mean_filtered_1 = df_filtered_1['Screen On Time (hours/day)'].mean()
-    mean_filtered_2 = df_filtered_2['Screen On Time (hours/day)'].mean()
-    mean_filtered_3 = df_filtered_3['Screen On Time (hours/day)'].mean()
-    mean_filtered_4 = df_filtered_4['Screen On Time (hours/day)'].mean()
-    mean_filtered_5 = df_filtered_5['Screen On Time (hours/day)'].mean()
-
-    
-    x = ['[0 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '50+']
-    y = [
-        mean_filtered_1,
-        mean_filtered_2,
-        mean_filtered_3,
-        mean_filtered_4,
-        mean_filtered_5
-    ]
-    y = [0 if isna(val) else val for val in y]   # Substitui NaN por 0
-
-    # Criação do gráfico
-    fig = go.Figure(data=[go.Bar(
-        x=x,
-        y=y,
-        marker=dict(color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']),
-    )])
-
-    # título e rótulos
-    fig.update_layout(
-        title='Tempo de tela médio por faixa etária',
-        xaxis_title='Faixa etária',
-        yaxis_title='Tempo de tela médio (horas/dia)',
-        yaxis=dict(range=[min(y) - 0.1, max(y) + 0.1]),  
-    )
-
-    # valores acima das barras
-    for i, val in enumerate(y):
-        fig.add_annotation(
-            x=x[i],
-            y=val + 0.05, 
-            text=f"{round(val, 2)}",  
-            showarrow=False,
-            font=dict(size=15)
-        )
-
-    
-    st.plotly_chart(fig)
-        
-
-def quantidade_idade(df):
-    # conta pessoas por idade
-    age_count = df['Age'].value_counts().sort_index()
-
-    # Criar gráfico 
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Bar(
-            x=age_count.index,  
-            y=age_count.values,  
-            marker_color='#18c0c4',  
-        )
-    )
-
-   
-    fig.update_layout(
-        title="Contagem de pessoas por Idade",
-        xaxis=dict(
-            title="Idade",
-            range=[17, 60],  
-            tickmode="linear"  
-        ),
-        yaxis=dict(
-            title="Quantidade de pessoas"
-        ),
-        template="plotly_dark", 
-        margin=dict(t=50, b=50, l=50, r=50)
-    )
-
-    
-    st.plotly_chart(fig)
-
-
-def tela_genero(df):
-    
-    df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
-    
-    # média do tempo de tela por gênero
-    gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
-    
-    # Criar o gráfico 
-    fig = px.bar(
-        gender_screen_time_avg,
-        x='Gender',
-        y='Screen On Time (hours/day)',
-        text='Screen On Time (hours/day)',
-        labels={'Gender': 'Gênero', 'Screen On Time (hours/day)': 'Tempo de Tela (Horas/Dia)'},
-        title="Tempo de Tela Médio por Gênero",
-        color='Gender', 
-        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'] 
-    )
-    
-    
-    fig.update_traces(texttemplate='%{text:.2f}', textposition='outside')
-    fig.update_layout(
-        yaxis=dict(range=[5.22, 5.32]),  
-        xaxis_title="Gênero",
-        yaxis_title="Tempo de Tela (Horas/Dia)",
-        showlegend=False,
-        title_x=0.5,  
-    )
-    
     st.plotly_chart(fig)
 
 def filtros_faixa_etaria(df):
@@ -282,36 +157,38 @@ def filtros_faixa_etaria(df):
 
     return filtros
 
-labels_faixa_etaria = ['[0 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '[ 50+ ]']
+titulo_faixas = ['[0 - 20]', '[21 - 30]', '[31 - 40]', '[41 - 50]', '[ 50+ ]']
 
 def tela_faixa_etaria(df):
     # Obter os filtros de faixa etária
     filtros = filtros_faixa_etaria(df)
 
-    # Calcular a média do tempo de tela para cada filtro de idade
+    # Calcula a média de tempo de tela para cada faixa etária
     medias = [filtro['Screen On Time (hours/day)'].mean() for filtro in filtros]
-    medias = [0 if isna(val) else val for val in medias]  # Substitui NaN por 0
+    medias = [0 if isna(val) else val for val in medias]    # Substitui NaN por 0
 
-    fig = go.Figure(data=[go.Bar(
-        x=labels_faixa_etaria,
-        y=medias,
-        text=[round(val, 2) for val in medias],  #texto com os valores arredondados
-        textposition='outside',  # Posiciona acima das barras
-        marker=dict(color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'])
-    )])
-
-    # Personalizar o layout
-    fig.update_layout(
-        title='Tempo de tela médio por faixa etária',
-        xaxis_title='Faixa etária',
-        yaxis_title='Tempo de tela médio (horas/dia)',
-        yaxis=dict(range=[min(medias) - 0.1, max(medias) + 0.1]),  
-        font=dict(size=15),
-        plot_bgcolor='rgba(0,0,0,0)',  
-        paper_bgcolor='rgba(0,0,0,0)',  
+    # Cria a figura
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x = titulo_faixas,
+            y = medias,
+            marker = dict(color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']),
+            text = [f'{round(valor, 2)}' for valor in medias],
+            textposition = 'outside'
+        )
     )
 
-
+    # Título e rótulos
+    fig.update_layout(
+        title = 'Tempo de tela médio por faixa etária',
+        xaxis_title = 'Faixa etária',
+        yaxis_title = 'Tempo de tela médio (horas/dia)',
+        yaxis = dict(range = [min(medias) - 0.1, max(medias) + 0.1]),
+        template = "plotly_dark",   # Tema do gráfico
+        margin = dict(t = 50, b = 50, l = 50, r = 50)
+    )
+    
     st.plotly_chart(fig)
 
 def usuarios_faixa_etaria(df):
@@ -322,79 +199,83 @@ def usuarios_faixa_etaria(df):
     contagem = [len(filtro) for filtro in filtros]
     contagem = [0 if isna(val) else val for val in contagem]  # Substitui NaN por 0
 
+    # Criar gráfico
     fig = px.pie(
-        names=labels_faixa_etaria,
-        values=contagem,
-        title="Distribuição de usuários por faixa etária",
-        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
+        names = titulo_faixas,
+        values = contagem,
+        title = "Distribuição de usuários por faixa etária",
+        color_discrete_sequence = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']
     )
 
-   
-    fig.update_traces(textinfo='percent+label')  # rótulos
+    # Colocando legenda
+    fig.update_traces(textinfo = 'percent+label')   # Rótulos
     fig.update_layout(
-        #colocando legenda
-        legend_title="Faixas Etárias",
-        legend=dict(
-            orientation="v",  
-            yanchor="top",
-            y=0.9,
-            xanchor="left",
-            x=1.05  
+        legend_title = "Faixas Etárias",
+        legend = dict(
+            orientation = "v",
+            yanchor = "top",
+            y = 0.9,
+            xanchor = "left",
+            x = 1.05
         ),
-        width=600,  
-        height=600  
+        template = 'plotly_dark',
+        width = 600,
+        height = 600
     )
 
-
-    st.plotly_chart(fig,use_container_width=False)
+    st.plotly_chart(fig,use_container_width = False)
 
 def usuarios_genero(df):
-    #filtros de gênero
+    # Filtros de gênero
     filtros = [
-        df[df['Gender'] == "Male"],
-        df[df['Gender'] == "Female"]
+        df[df['Gender'] == "Masculino"],
+        df[df['Gender'] == "Feminino"]
     ]
-    labels_genero = ["Masculino", "Feminino"]
+    titulo_generos = ["Masculino", "Feminino"]
 
-    # Contar de usuários por gênero
+    # Contagem de usuários por gênero
     contagem = [len(filtro) for filtro in filtros]
-    contagem = [0 if isna(val) else val for val in contagem]  # Substitui NaN por 0
 
     fig = px.pie(
-        names=labels_genero,
-        values=contagem,
-        title="Distribuição de usuários por gênero",
-        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width=600,  
-        height=600   
+        names = titulo_generos,
+        values = contagem,
+        title = "Distribuição de usuários por gênero",
+        color_discrete_sequence = ['#18c0c4', '#f62196'],
+        template = 'plotly_dark',
+        width = 600,
+        height = 600
     )
 
- 
     st.plotly_chart(fig)
 
 def aplicativos_faixa_etaria(df):
-    #filtros de faixa etária
+    # Obter os filtros de faixa etária
     filtros = filtros_faixa_etaria(df)
 
-    #média do tempo de tela para cada filtro de idade
+    # Calcula a média do tempo de tela para cada faixa etária
     medias = [filtro['Number of Apps Installed'].mean() for filtro in filtros]
     medias = [0 if isna(val) else val for val in medias]  #Substitui NaN por 0
 
-    fig = go.Figure(data=[go.Bar(
-        x=labels_faixa_etaria,
-        y=medias,
-        marker=dict(color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']),
-    )])
+    # Cria a figura
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+        x = titulo_faixas,
+        y = medias,
+        marker = dict(color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff']),
+        )
+    )
 
-    
+    # Título e rótulos
     fig.update_layout(
-        title='Média de aplicativos instalados por faixa etária',
-        xaxis_title='Faixa etária',
-        yaxis_title='Aplicativos instalados',
-        yaxis=dict(range=[min(medias) - 1, max(medias) + 1]),
-        font=dict(size=15),
-        width=600, 
-        height=600  
+        title = 'Média de aplicativos instalados por faixa etária',
+        xaxis_title = 'Faixa etária',
+        yaxis_title = 'Aplicativos instalados',
+        yaxis = dict(range = [49, 53]),
+        font = dict(size = 15),
+        template = 'plotly_dark',
+        width = 600,
+        height = 600  
     )
 
     st.plotly_chart(fig)

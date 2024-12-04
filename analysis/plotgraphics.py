@@ -1,162 +1,156 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import plotly.express as px
 import streamlit as st
 from pandas import isna
-
-import plotly.express as px
-import plotly.graph_objects as go
 
 #Obsoleto na troca da biblioteca
 plt.style.use('https://github.com/dhaitz/matplotlib-stylesheets/raw/master/pitayasmoothie-dark.mplstyle')
 plt.rcParams.update({'font.size': 15})
 
-
 def so_distribuicao(df):
-
-
     # Contar ocorrências de cada sistema operacional
     os_counts = df["Operating System"].value_counts().reset_index()
-    os_counts.columns = ["Operating System", "Count"] 
+    os_counts.columns = ["Sistema Operacional", "Usuários"] 
 
-    # Criar gráfico 
+    # Criar gráfico
     fig = px.pie(
-        os_counts, 
-        values="Count",  # Coluna com valores
-        names="Operating System",  # Coluna com nomes
-        title="Distribuição de usuários por sistema operacional",
-        color_discrete_sequence=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-        width=600,  
-        height=600   
+        os_counts,
+        values = "Usuários",    # Coluna com valores
+        names = "Sistema Operacional",  # Coluna com nomes
+        title = "Distribuição de usuários por sistema operacional",
+        color_discrete_sequence = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+        width = 600,
+        height = 600
     )
-   
+
     st.plotly_chart(fig)
 
 def consumo_modelo(df):
     # Calcular a média do consumo de bateria por modelo
-    battery_drain_avg = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
+    media_consumo = df.groupby('Device Model')['Battery Drain (mAh/day)'].mean().reset_index()
 
-
+    # Cria a figura
     fig = go.Figure()
-
-    
     fig.add_trace(
         go.Bar(
-            x=battery_drain_avg['Device Model'],
-            y=battery_drain_avg['Battery Drain (mAh/day)'],
-            marker_color=['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
-            text=battery_drain_avg['Battery Drain (mAh/day)'].round(2),  
-            textposition='outside'  
+            x = media_consumo['Device Model'],
+            y = media_consumo['Battery Drain (mAh/day)'],
+            marker_color = ['#18c0c4', '#f62196', '#A267F5', '#f3907e', '#ffe46b', '#fefeff'],
+            text = media_consumo['Battery Drain (mAh/day)'].round(2),
+            textposition = 'outside'
         )
     )
 
-    
+    # Configura os índices do gráfico
     fig.update_layout(
-        title="Média de consumo de bateria por dispositivo",
-        xaxis_title="Dispositivos",
-        yaxis_title="Média de consumo de bateria (mAh/dia)",
-        yaxis=dict(range=[1400, 1600]),  
-        xaxis_tickangle=30,  
-        template='plotly_white',  
-        margin=dict(t=50, b=50, l=50, r=50)
+        title = "Média de consumo de bateria por dispositivo",
+        xaxis_title = "Dispositivos",
+        yaxis_title = "Média de consumo de bateria (mAh/dia)",
+        yaxis = dict(range = [1400, 1600]),
+        xaxis_automargin = True,
+        template = 'plotly_white',
+        margin = dict(t = 50, b = 50, l = 50, r = 50)
     )
 
-    
     st.plotly_chart(fig)
 
 def tela_idade(df):
     # Calcula a média de idade de pessoas por tempo de tela
-    age_screen_time_avg = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
+    media_tela_idade = df.groupby('Age')['Screen On Time (hours/day)'].mean().reset_index()
 
-
+    # Cria a figura
     fig = go.Figure()
-
-  
     fig.add_trace(
         go.Bar(
-            x=age_screen_time_avg['Age'],
-            y=age_screen_time_avg['Screen On Time (hours/day)'],
-            marker_color='#18c0c4',  
+            x = media_tela_idade['Age'],
+            y = media_tela_idade['Screen On Time (hours/day)'],
+            marker_color ='#18c0c4'  
         )
     )
 
-
-   
+    # Configura os índices do gráfico
     fig.update_layout(
-        title="Tempo de tela médio por idade",
-        xaxis=dict(
-            title="Idade",
-            range=[17, 60], 
-            tickmode="linear"  # Garante que as idades sejam exibidas como inteiros
+        title = "Tempo de tela médio por idade",
+        xaxis = dict(
+            title = "Idade",
+            range = [17, 60],
+            tickmode = "linear",    # Garante que as idades sejam exibidas como inteiros
+            automargin = True
         ),
-        yaxis=dict(
-            title="Tempo de tela médio (horas/dia)",
-            range=[4, 7] 
+        yaxis = dict(
+            title = "Tempo de tela médio (horas/dia)",
+            range = [4, 7]
         ),
-        template="plotly_dark",  # Tema do gráfico
-        margin=dict(t=50, b=50, l=50, r=50)
+        template = "plotly_dark",   # Tema do gráfico
+        margin = dict(t = 50, b = 50, l = 50, r = 50)
     )
 
-
-    
     st.plotly_chart(fig)
 
 def quantidade_idade(df):
     # Calcular a quantidade de pessoas por idade
-    age_count = df['Age'].value_counts().sort_index()
+    contagem_idade = df['Age'].value_counts().sort_index()
 
-    fig, ax = plt.subplots(figsize = (10, 6))
-    ax.bar( # Configura o grafico de barras
-        age_count.index,
-        age_count.values,
-        color = ['#18c0c4'],
-        width = 0.6
+    # Cria a figura
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x = contagem_idade['Age'],
+            y = contagem_idade['Screen On Time (hours/day)'],
+            marker_color ='#18c0c4'  
+        )
     )
 
-    # Personaliza o gráfico
-    plt.title("Contagem de pessoas por idade")
-    plt.xlabel("Idade")
-    plt.ylabel("Quantidade de pessoas")
-    ax.set_xlim([min(age_count.index) - 1, max(age_count.index) + 1])   # Ajusta o intervalo do eixo x
-    plt.tight_layout()
+    # Configura os índices do gráfico
+    fig.update_layout(
+        title = "Contagem de pessoas por idade",
+        xaxis = dict(
+            title = "Idade",
+            range = [17, 60],
+            tickmode = "linear",    # Garante que as idades sejam exibidas como inteiros
+            automargin = True
+        ),
+        yaxis_title = "Quantidade de pessoas",
+        template = "plotly_dark",   # Tema do gráfico
+        margin = dict(t = 50, b = 50, l = 50, r = 50)
+    )
 
     st.pyplot(fig)
 
 def tela_genero(df):
     # Calcula a média do tempo de tela por gênero
     df['Gender'] = df['Gender'].replace({'Female': 'Feminino', 'Male': 'Masculino'})
-    gender_screen_time_avg = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
-
-
+    media_tela_genero = df.groupby('Gender')['Screen On Time (hours/day)'].mean().reset_index()
     
-    # Criação do gráfico 
-    fig = go.Figure(data=[go.Bar(
-        x=gender_screen_time_avg['Gender'],
-        y=gender_screen_time_avg['Screen On Time (hours/day)'],
-        marker=dict(color=['#18c0c4', '#f62196']),
-    )])
-
-    # título e rótulos
-    fig.update_layout(
-        title="Tempo de tela médio por gênero",
-        xaxis_title="Gênero",
-        yaxis_title="Tela Ligada (Hora/dia)",
-        yaxis=dict(range=[5.2, 5.3]),  
-        font=dict(size=15),
+    # Cria a figura
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x = media_tela_genero['Gender'],
+            y = media_tela_genero['Screen On Time (hours/day)'],
+            marker_color = ['#18c0c4', '#f62196'],
+            text = media_tela_genero['Screen On Time (hours/day)'].round(2),
+            textposition = 'outside'
+        )
     )
 
-    # valores acima das barras
-    for i, val in enumerate(gender_screen_time_avg['Screen On Time (hours/day)']):
-        fig.add_annotation(
-            x=gender_screen_time_avg['Gender'][i],
-            y=val + 0.001,  
-            text=f"{round(val, 2)}",  
-            showarrow=False,
-            font=dict(size=15)
+    # Título e rótulos
+    fig.update_layout(
+        title = "Tempo de tela médio por gênero",
+        xaxis_title = "Gênero",
+        yaxis = dict(
+            title = "Tempo de tela (Hora/dia)",
+            range = [5.2, 5.3]
+        ),
+        font_size = 15,
+        title_x = 0,
+        title_y = 0.95,
+        template = "plotly_dark",   # Tema do gráfico
+        margin = dict(t = 50, b = 50, l = 50, r = 50)
+    )
 
-        )
-
-   
     st.plotly_chart(fig)
-
 
 def tela_faixa_etaria(df):
     df_filtered_1 = df[df['Age'] <= 20]

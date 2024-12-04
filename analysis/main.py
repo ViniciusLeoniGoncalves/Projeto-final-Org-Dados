@@ -17,7 +17,7 @@ if  os.path.exists(datapath):
         "Navegue pelas análises disponíveis",
         options = (
             "Página inicial",
-            "Distribuição por sistema operacional",
+            "Distribuição de usuários por sistema operacional",
             "Média de consumo de bateria por dispositivo",
             "Tempo de tela médio por idade",
             "Tempo de tela médio por gênero",
@@ -63,7 +63,7 @@ if  os.path.exists(datapath):
             - Vítor Ambrizzi - 121059455.
         """)
     # Exibir gráficos com base na aba selecionada
-    elif opt == "Distribuição por sistema operacional":
+    elif opt == "Distribuição de usuários por sistema operacional":
         st.markdown("# Qual o modelo de celular mais popular entre os usuários?")
         st.write("Observando contagem de sistemas operacionais em nossa base de dados, é possível afirmar com certeza que os aparelhos celulares dos usuários utilizam **predominantemente** o Android. Veja a proporção:")
         pg.so_distribuicao(df)
